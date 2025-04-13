@@ -1,66 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📬 Lead Submission API – Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a Laravel-based API for submitting lead information via POST requests. The API is protected using token-based authentication and includes input validation and request/response logging.
 
-## About Laravel
+## 🚀 Setup Instructions
+Clone the repository:  
+`git clone https://github.com/AlyssonSantos1/Aleatory.git`  
+`cd Aleatory`
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Install dependencies:  
+`composer install`
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Copy the example environment file and generate the application key:  
+`cp .env.example .env`  
+`php artisan key:generate`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Edit the `.env` file and set your database credentials and API token:  
 
-## Learning Laravel
+DB_DATABASE=your_database DB_USERNAME=your_username DB_PASSWORD=your_password API_TOKEN=mytoken123
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Run the migrations:  
+`php artisan migrate`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Start the server:  
+**Option A – Laravel’s built-in server:**  
+`php artisan serve`
 
-## Laravel Sponsors
+**Option B – Laragon (Apache):**  
+Make sure Apache is running in Laragon and access the project at:  
+`http://localhost/Aleatory/public`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🔐 Authentication
+All API requests must include the following HTTP header:  
+`API-TOKEN: mytoken123`
 
-### Premium Partners
+## 📤 Endpoint: POST /api/leads
+Creates a new lead.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+**Required Headers:**
+- Content-Type: application/json
+- API-TOKEN: mytoken123
 
-## Contributing
+**Request Body Example:**
+```json
+{
+  "first_name": "Elton",
+  "last_name": "Heaven",
+  "email": "eltonh@email.com",
+  "phone": "313-564-8207",
+  "date_of_birth": "1996-07-14"
+}
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+✅ Expected Responses
+201 – Created
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+{
+  "message": "Lead created successfully",
+  "lead": {
+    "first_name": "Elton",
+    "last_name": "Heaven",
+    "email": "eltonh@email.com",
+    "phone": "313-564-8207",
+    "date_of_birth": "1996-07-14",
+    "created_at": "2025-04-12T00:00:00",
+    "updated_at": "2025-04-12T00:00:00"
+  }
+}
 
-## Security Vulnerabilities
+401 – Unauthorized
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+{
+  "error": "Unauthorized"
+}
 
-## License
+422 – Validation Errors
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+{
+  "errors": {
+    "email": [
+      "The email has already been taken."
+    ]
+  }
+}
+
+500 – Internal Server Error
+{
+  "error": "Internal server error"
+}
+
+📌 Notes
+The email field must be unique.
+
+The date_of_birth field is optional but must be a valid date before today.
+
+⚠️ Known Issues / Limitations
+✅ Load Testing Note
+During the load test using Artillery, the application encountered connection refusals when attempting to handle 60,000 requests per minute. This behavior suggests that Laravel's built-in development server (php artisan serve) is not suitable for handling such high throughput. In a production environment, this traffic would typically be managed using a more robust server like Apache or Nginx, possibly combined with queuing systems such as Redis to ensure scalability and performance.
+
+This project was developed and tested using Laragon, which includes Apache pre-configured for local environments. Laragon is ideal for local development, but not designed for high-scale production-grade load tests.
