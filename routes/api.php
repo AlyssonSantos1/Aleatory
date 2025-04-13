@@ -18,5 +18,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/leads', [LeadController::class, 'store']);
+// Route::post('/leads', [LeadController::class, 'store']);
 Route::middleware(['api.token'])->post('/leads', [LeadController::class, 'store']);

@@ -14,7 +14,7 @@ class LeadController extends Controller
 {
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data = $request->only(['first_name', 'last_name', 'email', 'phone', 'date_of_birth']);
 
         //Requisition Log
         $requestLog = ApiRequestLog::create([
@@ -27,10 +27,10 @@ class LeadController extends Controller
             // Validate
             $validator = Validator::make($data, [
                 'first_name' => 'required|string|max:100',
-                'last_name' => 'required|string|max:100',
+                'last_name'  => 'required|string|max:100',
                 'email' => 'required|email|unique:leads,email',
                 'phone' => 'required|string|max:20',
-                'date_of_birth' => 'date|nullable',
+                'date_of_birth' => 'date|nullable|before:today',
             ]);
 
             if ($validator->fails()) {
