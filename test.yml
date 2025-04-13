@@ -1,0 +1,18 @@
+config:
+  target: "http://localhost/TruePathTest/public"
+  phases:
+    - duration: 60
+      arrivalRate: 1000
+  headers:
+    API-TOKEN: "mytoken123"
+
+scenarios:
+  - flow:
+      - post:
+          url: "/api/leads"
+          json:
+            first_name: "John"
+            last_name: "Doe"
+            email: "john@example.com"
+            phone: "123456789"
+            date_of_birth: "1990-01-01"
